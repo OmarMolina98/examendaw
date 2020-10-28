@@ -1,19 +1,21 @@
 <?php
 
     session_start();
+
     require_once("util.php");
-    include("Partials/General/_head.html");
+
+    include("_header.html");
+
+    include("_nuevo.html");
   
-    include("Partials/ConsultaIncidentes/_titulo.html");
 
-    include("Partials/General/_fedback.html");
+    echo(" <div id=\"Zombie\">");
 
+    echo getZombie();
 
-            echo(" <div id=\"resultadoIncidentes\">");
+    echo(" </div>");
 
-                echo getIncidentes();
+    include("_footer.html");
 
-            echo(" </div>");
-
-    include("Partials/General/_endPage.html");
+  
 ?>

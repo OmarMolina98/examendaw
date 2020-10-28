@@ -1,37 +1,105 @@
 <?php
 
-    function conectar_bd() {
+
+	function conectar_bd()
+	{
+		$conexion_bd = mysqli_connect("sql3.freemysqlhosting.net", "sql3373124", "eyS1Bz9DlG", "sql3373124");
         
-        $conexion_bd = mysqli_connect("sql3.freemysqlhosting.net","sql3373124","eyS1Bz9DlG","sql3373124");
-        if ($conexion_bd == NULL) {
-            die("No se pudo conectar con la base de datos");
+		if($conexion_bd == NULL)
+			die("La base de datos aun no esta disponible intenta mas tarded");
+		
+		$conexion_bd->set_charset("utf8");	
+        
+		return $conexion_bd;
+	}
+
+	
+	function desconectar_bd($conexion_bd)
+	{
+		mysqli_close($conexion_bd);
+	}
+
+
+ function insertarIncidente($nombre,$incidente) {
+        
+        $conexion_bd = conectar_bd();
+        
+        $conexion_bd->set_charset("utf8");
+        
+        $dml = 'INSERT INTO `Registro` (idNombre, idEstadoActual) VALUES (?,?)';
+        
+        if ( !($statement = $conexion_bd->prepare($dml)) ) {
+            
+            die("Error: (" . $conexion_bd->errno . ") " . $conexion_bd->error);
+            return 0;
         }
-        return $conexion_bd;
-    }
 
-    function cerrar_bd($conexion_bd) {
+        if (!$statement->bind_param("ii", $nombre,$incidente)) {
+            
+            die("Error en vinculación: (" . $statement->errno . ") " . $statement->error);
+            return 0;
+        } 
         
-        mysqli_close($conexion_bd);
-    }
-
-    function cleamData ($dataToCleam){
         
-        return stripslashes(trim(htmlspecialchars($dataToCleam)));
+        if (!$statement->execute()) {
+            
+            die("Error en ejecución: (" . $statement->errno . ") " . $statement->error);
+            return 0;
+        }
+        
+          return 1;
+      }
+
+
+
+ function crear_select($id, $asmr, $tabla, $seleccion=0) {
+        
+        $conexion_bd = conectar_bd();
+        
+        $resultado = '<div id='.$tabla.'><select name="'.$tabla.'" required><option disabled selected>Selecciona una opción</option>';
+                
+        $consulta = "SELECT $id, $asmr FROM $tabla";
+        
+        $resultados = $conexion_bd->query($consulta);
+        
+        while ($row = mysqli_fetch_array($resultados, MYSQLI_BOTH)) {
+            
+            $resultado .= '<option value="'.$row["$id"].'" ';
+            
+            if($seleccion == $row["$id"]) {
+                
+                $resultado .= 'selected';
+            }
+            
+            $resultado .= '>'.$row["$asmr"].'</option>';
+        }
+            
+        
+        $resultado .=  '</select></div>';
+        
+        return $resultado;
     }
 
-    function getIncidentes($idLugar=""){
+
+
+
+
+    function getZombie($idNombre=""){
         
         $con = conectar_bd();
         
         $con->set_charset("utf8");
         
-        $sql = "SELECT  DATE_FORMAT(S.fecha,\"%d/%m/%Y\") as fecha, S.fecha as fechaC, DATE_FORMAT(S.fecha,\"%H:%i:%s\") as hora, L.nombre as lugar, T.nombre as tipo 
-                FROM IncidenteSeguridad as S ,IncidenteTipo as T, Lugares as L 
-                Where S.idLugares = L.id and S.idIncidenteTipo = T.id "; 
+       $sql = "SELECT  DATE_FORMAT(R.fecha,\"%d/%m/%Y\") as fecha, R.fecha as fechaC, DATE_FORMAT(R.fecha,\"%H:%i:%s\") as hora, N.nombre as nombre, E.nombre as incidente 
+              
+                FROM Registro as R ,EstadoActual as E, Nombre as N
+                
+                Where R.idNombre = N.id and R.idEstadoActual = E.id";
+                
         
-        if($idLugar != ""){
+        if($idNombre != ""){
             
-            $sql .= " and S.idLugares = $idLugar";
+            $sql .= " and R.idNombre = $idNombre";
         }
 
         $sql .=" ORDER  BY  fechaC  DESC";
@@ -47,20 +115,21 @@
             $tabla .= "<thead>
             
             <tr>
+            <th>Nombre</th>
+            <th>Tipo de incidente</th>
             <th>Fecha</th>
             <th>Hora</th>
-            <th>Lugar</th>
-            <th>Tipo de incidente</th>
             </tr>
             </thead>";
             
             while($row = mysqli_fetch_assoc($result)){   
                 
                 $tabla .= "<tr>";
+                $tabla .= "<td>". $row["nombre"]. "</td>"; 
+                $tabla .= "<td>". $row["incidente"]. "</td>"; 
+              
                 $tabla .= "<td>". $row["fecha"]. "</td>";
                 $tabla .= "<td>". $row["hora"]. "</td>";
-                $tabla .= "<td>". $row["lugar"]. "</td>"; 
-                $tabla .= "<td>". $row["tipo"]. "</td>"; 
                 $tabla .= "</tr>";
             }
             
@@ -68,89 +137,24 @@
             }
             else{
 
-                  $tabla .= "
-                  <div class=\"row\">
-                  <div class=\"col s12 m12 l12\">
-                      <div class=\"card blue lighten-1\">
+                
+                 $tabla .= "
+             
+                      <div class=\"card blue\">
                           <div class=\"card-content white-text\">
-                              <span class=\"card-title\">No se encontró ningún resultado.</span>
+                              <span class=\"card-title\">No hay nada.</span>
                           </div>
                       </div>
-                  </div>
-              </div>
+                
                   ";
+                
             }
         
-        cerrar_bd($con);
+       
         
         return $tabla;
     }
-
-    //segunda hoja
-
-    function crear_select($id, $columna_descripcion, $tabla, $seleccion=0) {
-        
-        $conexion_bd = conectar_bd();
-        
-        $conexion_bd->set_charset("utf8");
-        
-        $resultado = '<div id='.$tabla.'><select name="'.$tabla.'" required><option  disabled selected>Selecciona una opción</option>';
-                
-        $consulta = "SELECT $id, $columna_descripcion FROM $tabla";
-        
-        $resultados = $conexion_bd->query($consulta);
-        
-        while ($row = mysqli_fetch_array($resultados, MYSQLI_BOTH)) {
-            
-            $resultado .= '<option value="'.$row["$id"].'" ';
-            
-            if($seleccion == $row["$id"]) {
-                
-                $resultado .= 'selected';
-            }
-            
-            $resultado .= '>'.$row["$columna_descripcion"].'</option>';
-        }
-            
-        cerrar_bd($conexion_bd);
-        
-        $resultado .=  '</select></div>';
-        
-        return $resultado;
-    }
-
-    function insertarIncidente($lugar,$tipo) {
-        
-        $conexion_bd = conectar_bd();
-        
-        $conexion_bd->set_charset("utf8");
-        
-        //Prepara la consulta
-        
-        $dml = 'INSERT INTO IncidenteSeguridad (idLugares, idIncidenteTipo) VALUES (?,?)';
-        
-        if ( !($statement = $conexion_bd->prepare($dml)) ) {
-            die("Error: (" . $conexion_bd->errno . ") " . $conexion_bd->error);
-            return 0;
-        }
-        //Unir los parámetros de la función con los parámetros de la consulta   
-        //El primer argumento de bind_param es el formato de cada parámetro
-        
-        if (!$statement->bind_param("ii", $lugar,$tipo)) {
-            die("Error en vinculación: (" . $statement->errno . ") " . $statement->error);
-            return 0;
-        } 
-        //Executar la consulta
-        
-        if (!$statement->execute()) {
-          die("Error en ejecución: (" . $statement->errno . ") " . $statement->error);
-            return 0;
-        }
-        
-        cerrar_bd($conexion_bd);
-        
-          return 1;
-      }
-
+    
+    
 
 ?>

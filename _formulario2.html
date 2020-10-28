@@ -1,21 +1,22 @@
 <div class="Container">
 
-    <form action="controladorAltaIncidente.php" method="post">
+    <form action="post.php" method="post">
        
-        <h3 class="center-align">Lugar del acidente</h3>
-        <div class="file-field input-field">
+        <h3 class="center-align">Nombre</h3>
+      
           <div class="input-field col s12">
-            <i class="material-icons prefix"> </i>
-            <?=crear_select("id", "nombre", "Lugares");?>  
+           
+            <?=crear_select("id", "nombre", "Nombre");?>
+              
           </div>
-        </div>
-        <h3 class="center-align">Tipo de accidente</h3>
+        
+        <h3 class="center-align">Que le paso</h3>
         
         <div class="file-field input-field">
     
           <div class="input-field col s12">
-            <i class="material-icons prefix"> </i>
-            <?=crear_select("id", "nombre", "IncidenteTipo");?>  
+            
+            <?=crear_select("id", "nombre", "EstadoActual");?>  
           </div>
           
         </div>
