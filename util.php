@@ -2,7 +2,7 @@
 
     function conectar_bd() {
         
-        $conexion_bd = mysqli_connect("localhost","root","","futbol");
+        $conexion_bd = mysqli_connect("sql3.freemysqlhosting.net","sql3373124","eyS1Bz9DlG","sql3373124");
         if ($conexion_bd == NULL) {
             die("No se pudo conectar con la base de datos");
         }
