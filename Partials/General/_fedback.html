@@ -1,0 +1,33 @@
+<?php if(isset($_SESSION["mensaje"])): ?>
+
+	<div id="mensaje" class="row">
+		<div class="col s12 m6">
+		<div class="card green darken-1">
+			<div class="card-content white-text">
+			<p><?= $_SESSION["mensaje"] ?></p>
+			</div>
+		</div>
+		</div>
+	</div>
+	
+	<?php unset($_SESSION["mensaje"])?>
+	
+<?php endif;?>
+
+<!--Mensaje de error para insertar entrega-->
+<?php if(isset($_SESSION["warning"])): ?>
+
+	<div id="mensaje" class="row">
+		<div class="col s12 m6">
+		<div class="card red darken-1">
+			<div class="card-content white-text">
+			<p><?= $_SESSION["warning"] ?></p>
+			</div>
+		</div>
+		</div>
+	</div>
+	
+	<?php unset($_SESSION["warning"])?>
+	
+<?php endif;?>
+

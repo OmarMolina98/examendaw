@@ -1,0 +1,34 @@
+<div class="Container">
+
+    <form action="controladorAltaIncidente.php" method="post">
+       
+        <h3 class="center-align">Lugar del acidente</h3>
+        <div class="file-field input-field">
+          <div class="input-field col s12">
+            <i class="material-icons prefix"> </i>
+            <?=crear_select("id", "nombre", "Lugares");?>  
+          </div>
+        </div>
+        <h3 class="center-align">Tipo de accidente</h3>
+        
+        <div class="file-field input-field">
+    
+          <div class="input-field col s12">
+            <i class="material-icons prefix"> </i>
+            <?=crear_select("id", "nombre", "IncidenteTipo");?>  
+          </div>
+          
+        </div>
+                
+          <div class="col s10 offset-s1 center-align">
+            <button id="btn_1" class="waves-effect waves-light btn" type="submit" name="action">
+                Submit
+                <i class="material-icons right">send</i>
+            </button>
+          </div>
+        
+        <br><br><br>
+        <br><br><br>
+        <br><br><br>
+    </form>
+</div>
