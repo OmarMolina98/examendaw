@@ -20,39 +20,10 @@
 	}
 
 
- function insertarIncidente($nombre,$incidente) {
-        
-        $conexion_bd = conectar_bd();
-        
-        $conexion_bd->set_charset("utf8");
-        
-        $dml = 'INSERT INTO `Registro` (idNombre, idEstadoActual) VALUES (?,?)';
-        
-        if ( !($statement = $conexion_bd->prepare($dml)) ) {
-            
-            die("Error: (" . $conexion_bd->errno . ") " . $conexion_bd->error);
-            return 0;
-        }
-
-        if (!$statement->bind_param("ii", $nombre,$incidente)) {
-            
-            die("Error en vinculación: (" . $statement->errno . ") " . $statement->error);
-            return 0;
-        } 
-        
-        
-        if (!$statement->execute()) {
-            
-            die("Error en ejecución: (" . $statement->errno . ") " . $statement->error);
-            return 0;
-        }
-        
-          return 1;
-      }
 
 
 
- function crear_select($id, $asmr, $tabla, $seleccion=0) {
+ function select($id, $asmr, $tabla, $ele=0) {
         
         $conexion_bd = conectar_bd();
         
@@ -66,7 +37,7 @@
             
             $resultado .= '<option value="'.$row["$id"].'" ';
             
-            if($seleccion == $row["$id"]) {
+            if($ele == $row["$id"]) {
                 
                 $resultado .= 'selected';
             }

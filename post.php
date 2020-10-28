@@ -11,10 +11,10 @@
 
   if(isset($_POST["Nombre"],$_POST["EstadoActual"])) {
       
-      if (insertarIncidente($_POST["Nombre"],$_POST["EstadoActual"])){
+      //if (insertarIncidente($_POST["Nombre"],$_POST["EstadoActual"])){
           
          
-      } 
+      //} 
       else {
           
         
